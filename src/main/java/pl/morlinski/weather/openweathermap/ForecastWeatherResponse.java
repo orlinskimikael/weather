@@ -1,24 +1,29 @@
 package pl.morlinski.weather.openweathermap;
 
-import static pl.morlinski.weather.DataConverter.convertTimestampToLocalDataTime;
+import static pl.morlinski.weather.DataUtils.convertTimestampToLocalDataTime;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import pl.morlinski.weather.DataUtils;
 import pl.morlinski.weather.Weather;
 
+/**
+ * Odpowiedz dla zapytania o prognozę pogody na 5 dni z rozdzielczością 3
+ * godzin.
+ * 
+ * @author Michał Orliński
+ * @since 2018-06-25
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class ForecastWeatherResponse implements Weather {
-    private static final Logger logger = LoggerFactory.getLogger(ForecastWeatherResponse.class);
-
     private String code;
     private String message;
     private City city;
@@ -36,12 +41,16 @@ public class ForecastWeatherResponse implements Weather {
     public double rain(LocalDateTime begin, LocalDateTime end) {
         AtomicInteger count = new AtomicInteger(0);
 
-        double rainSum = Arrays.stream(list).mapToDouble(list -> {
-            LocalDateTime time = convertTimestampToLocalDataTime(list.getDt());
+        double rainSum = Arrays.stream(list).mapToDouble(item -> {
+            LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (time.isAfter(begin) && time.isBefore(end) && list.getRain() != null) {
+            if (DataUtils.timeIsBetween(time, begin, end)) {
                 count.incrementAndGet();
-                return list.getRain().getRain3h();
+                if (item.getRain() == null) {
+                    return 0.0;
+                } else {
+                    return item.getRain().getRain3h();
+                }
             } else {
                 return 0.0;
             }
@@ -49,27 +58,30 @@ public class ForecastWeatherResponse implements Weather {
 
         double rainAvg = rainSum / count.get();
 
-        logger.info("RainAvg: {}/{} = {}", rainSum, count.get(), rainAvg);
+        log.info("RainAvg: {}/{} = {}", rainSum, count.get(), rainAvg);
         return rainAvg;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * pl.morlinski.weather.openweathermap.Weather#temperature(java.time.
+     * @see pl.morlinski.weather.openweathermap.Weather#temperature(java.time.
      * LocalDateTime, java.time.LocalDateTime)
      */
     @Override
     public double temperature(LocalDateTime begin, LocalDateTime end) {
         AtomicInteger count = new AtomicInteger(0);
 
-        double temperatureSum = Arrays.stream(list).mapToDouble(list -> {
-            LocalDateTime time = convertTimestampToLocalDataTime(list.getDt());
+        double temperatureSum = Arrays.stream(list).mapToDouble(item -> {
+            LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (time.isAfter(begin) && time.isBefore(end) && list.getMain() != null) {
+            if (DataUtils.timeIsBetween(time, begin, end)) {
                 count.incrementAndGet();
-                return list.getMain().getTemp();
+                if (item.getMain() == null) {
+                    return 0.0;
+                } else {
+                    return item.getMain().getTemp();
+                }
             } else {
                 return 0.0;
             }
@@ -77,7 +89,7 @@ public class ForecastWeatherResponse implements Weather {
 
         double temperatureAvg = temperatureSum / count.get();
 
-        logger.info("TemperatureAvg: {}/{} = {}", temperatureSum, count.get(), temperatureAvg);
+        log.info("TemperatureAvg: {}/{} = {}", temperatureSum, count.get(), temperatureAvg);
         return temperatureAvg;
     }
 
@@ -91,12 +103,16 @@ public class ForecastWeatherResponse implements Weather {
     public double cloud(LocalDateTime begin, LocalDateTime end) {
         AtomicInteger count = new AtomicInteger(0);
 
-        double cloudsSum = Arrays.stream(list).mapToDouble(list -> {
-            LocalDateTime time = convertTimestampToLocalDataTime(list.getDt());
+        double cloudsSum = Arrays.stream(list).mapToDouble(item -> {
+            LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (time.isAfter(begin) && time.isBefore(end) && list.getClouds() != null) {
+            if (DataUtils.timeIsBetween(time, begin, end) && item.getClouds() != null) {
                 count.incrementAndGet();
-                return list.getClouds().getAll();
+                if (item.getClouds() == null) {
+                    return 0.0;
+                } else {
+                    return item.getClouds().getAll();
+                }
             } else {
                 return 0.0;
             }
@@ -104,7 +120,7 @@ public class ForecastWeatherResponse implements Weather {
 
         double cloudAvg = cloudsSum / count.get();
 
-        logger.info("CloudAvg: {}/{} = {}%", cloudsSum, count.get(), cloudAvg);
+        log.info("CloudAvg: {}/{} = {}%", cloudsSum, count.get(), cloudAvg);
         return cloudAvg;
     }
 }

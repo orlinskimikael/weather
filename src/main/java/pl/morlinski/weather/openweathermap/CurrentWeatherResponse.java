@@ -1,22 +1,26 @@
 package pl.morlinski.weather.openweathermap;
 
-import static pl.morlinski.weather.DataConverter.convertTimestampToLocalDataTime;
+import static pl.morlinski.weather.DataUtils.convertTimestampToLocalDataTime;
+import static pl.morlinski.weather.DataUtils.timeIsBetween;
 
 import java.time.LocalDateTime;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import pl.morlinski.weather.Weather;
 
+/**
+ * Odpowiedz dla zapytania o obecną pogodę.
+ * 
+ * @author Michał Orliński
+ * @since 2018-06-25
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class CurrentWeatherResponse implements Weather {
-    private static final Logger logger = LoggerFactory.getLogger(CurrentWeatherResponse.class);
-
     private Coord coord;
     private pl.morlinski.weather.openweathermap.Weather[] weather;
     private String base;
@@ -41,13 +45,17 @@ public class CurrentWeatherResponse implements Weather {
     @Override
     public double rain(LocalDateTime begin, LocalDateTime end) {
         LocalDateTime time = convertTimestampToLocalDataTime(dt);
-        
+
         double rain3h = -1.0;
-        if (time.isAfter(begin) && time.isBefore(end) && rain != null) {
-            rain3h = rain.getRain3h();
+        if (timeIsBetween(time, begin, end)) {
+            if(rain == null) {
+                rain3h = 0.0;
+            } else {
+                rain3h = rain.getRain3h();
+            }
         }
 
-        logger.info("RainCurrent: {}", rain3h);
+        log.info("RainCurrent: {}", rain3h);
         return rain3h;
     }
 
@@ -60,33 +68,40 @@ public class CurrentWeatherResponse implements Weather {
     @Override
     public double cloud(LocalDateTime begin, LocalDateTime end) {
         LocalDateTime time = convertTimestampToLocalDataTime(dt);
-        
+
         double cloud = -1.0;
-        if (time.isAfter(begin) && time.isBefore(end) && clouds != null) {
-            cloud = clouds.getAll();
+        if (timeIsBetween(time, begin, end)) {
+            if(clouds == null) {
+                cloud = 0.0;
+            } else {
+                cloud = clouds.getAll();
+            }
         }
 
-        logger.info("CloudCurrent: {}%", cloud);
+        log.info("CloudCurrent: {}%", cloud);
         return cloud;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * pl.morlinski.weather.openweathermap.Weather#temperature(java.time.
+     * @see pl.morlinski.weather.openweathermap.Weather#temperature(java.time.
      * LocalDateTime, java.time.LocalDateTime)
      */
     @Override
     public double temperature(LocalDateTime begin, LocalDateTime end) {
         LocalDateTime time = convertTimestampToLocalDataTime(dt);
-        
+
         double temperature = -1.0;
-        if (time.isAfter(begin) && time.isBefore(end) && main != null) {
-            temperature = main.getTemp();
+        if (timeIsBetween(time, begin, end)) {
+            if(main == null) {
+                temperature = 0.0;
+            } else {
+                temperature = main.getTemp();
+            }
         }
 
-        logger.info("TemperatureCurrent: {}", temperature);
+        log.info("TemperatureCurrent: {}", temperature);
         return temperature;
     }
 }

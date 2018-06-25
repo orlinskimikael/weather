@@ -1,5 +1,6 @@
 package pl.morlinski.weather.openweathermap;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
@@ -14,5 +15,6 @@ public class List {
     private Wind wind;
     private Rain rain;
     private Snow snow;
-    private String dt_txt;
+    @JsonAlias("dt_txt")
+    private String dtTxt;
 }
