@@ -1,7 +1,7 @@
 package pl.morlinski.weather.openweathermap;
 
-import static pl.morlinski.weather.DataUtils.convertTimestampToLocalDataTime;
-import static pl.morlinski.weather.DataUtils.timeIsBetween;
+import static pl.morlinski.weather.DateUtils.convertTimestampToLocalDataTime;
+import static pl.morlinski.weather.DateUtils.timeIsBetween;
 
 import java.time.LocalDateTime;
 

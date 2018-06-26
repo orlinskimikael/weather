@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>pl.morlinski</groupId>
   <artifactId>weather</artifactId>
-  <version>0.0.1 SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -14,6 +14,11 @@
 
   <properties>
     <java.version>1.8</java.version>
+    <sonar.coverage.exclusions>**/pl/morlinski/weather/openweathermap/City.java,**/pl/morlinski/weather/openweathermap/Coord.java,
+      **/pl/morlinski/weather/openweathermap/List.java,**/pl/morlinski/weather/openweathermap/Snow.java,**/pl/morlinski/weather/openweathermap/Sys.java,
+      **/pl/morlinski/weather/openweathermap/Weather.java,**/pl/morlinski/weather/openweathermap/Wind.java,**/pl/morlinski/weather/openweathermap/Main.java,
+      **/pl/morlinski/weather/openweathermap/Clouds.java,**/pl/morlinski/weather/openweathermap/Rain.java
+    </sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -39,6 +44,69 @@
       <artifactId>smsapi-lib</artifactId>
       <version>2.4</version>
     </dependency>
+
+    <!-- TEST -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- dependency> <groupId>org.junit.jupiter</groupId> <artifactId>junit-jupiter-api</artifactId> 
+      <scope>test</scope> </dependency> <dependency> <groupId>org.junit.jupiter</groupId> 
+      <artifactId>junit-jupiter-engine</artifactId> <scope>test</scope> </dependency> 
+      <dependency> <groupId>org.junit.vintage</groupId> <artifactId>junit-vintage-engine</artifactId> 
+      <scope>test</scope> </dependency> <dependency> <groupId>org.junit.platform</groupId> 
+      <artifactId>junit-platform-launcher</artifactId> <version>1.1.0</version> 
+      <scope>test</scope> </dependency> <dependency> <groupId>org.junit.platform</groupId> 
+      <artifactId>junit-platform-runner</artifactId> <version>1.1.0</version> <scope>test</scope> 
+      </dependency -->
+    <dependency>
+      <groupId>com.googlecode.catch-exception</groupId>
+      <artifactId>catch-exception</artifactId>
+      <version>1.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- /TEST -->
   </dependencies>
 
 
@@ -48,6 +116,11 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <!-- plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId> 
+        <dependencies> <dependency> <groupId>org.junit.platform</groupId> <artifactId>junit-platform-surefire-provider</artifactId> 
+        <version>1.1.0</version> </dependency> <dependency> <groupId>org.junit.jupiter</groupId> 
+        <artifactId>junit-jupiter-engine</artifactId> <version>5.1.1</version> </dependency> 
+        </dependencies> </plugin -->
     </plugins>
   </build>
 

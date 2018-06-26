@@ -10,9 +10,9 @@ import java.util.TimeZone;
  * @author Michał Orliński
  * @since 2018-06-25
  */
-public class DataUtils {
+public class DateUtils {
 
-    private DataUtils() {
+    private DateUtils() {
     }
 
     /**

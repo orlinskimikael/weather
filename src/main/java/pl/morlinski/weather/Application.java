@@ -30,11 +30,6 @@ import pl.smsapi.exception.ClientException;
 @Slf4j
 public class Application {
     /**
-     * Flaga produkcyjnej wersji.
-     */
-    private static final boolean PROD = false;
-
-    /**
      * Metoda main aplikacji.
      * 
      * @param args
@@ -103,10 +98,8 @@ public class Application {
                     .execute();
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextDayStart = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 4, 0)
-                    .plusDays(1);
-            LocalDateTime nextDayEnd = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 18, 0)
-                    .plusDays(1);
+            LocalDateTime nextDayStart = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 4, 0);
+            LocalDateTime nextDayEnd = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 18, 0);
 
             String message = "Rain: " + forecast.rain(nextDayStart, nextDayEnd) + "mm;Cloud: "
                     + forecast.cloud(nextDayStart, nextDayEnd) + "%;Temp: "
@@ -114,9 +107,7 @@ public class Application {
                     + nextDayEnd.toString();
             log.info("message: {}", message);
 
-            if (PROD) {
-                smsApi.sendSMS(message, phoneNumber);
-            }
+            smsApi.sendSMS(message, phoneNumber);
         };
     }
 

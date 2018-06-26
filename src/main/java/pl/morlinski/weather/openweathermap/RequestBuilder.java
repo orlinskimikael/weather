@@ -156,4 +156,9 @@ public class RequestBuilder implements RequestBuilderOperation, RequestBuilderPa
         return weather;
     }
 
+    @Override
+    public String getUrl() {
+        return fullUrl;
+    }
+
 }

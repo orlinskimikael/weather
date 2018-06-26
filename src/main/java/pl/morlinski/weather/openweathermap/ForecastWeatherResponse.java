@@ -1,6 +1,6 @@
 package pl.morlinski.weather.openweathermap;
 
-import static pl.morlinski.weather.DataUtils.convertTimestampToLocalDataTime;
+import static pl.morlinski.weather.DateUtils.convertTimestampToLocalDataTime;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import pl.morlinski.weather.DataUtils;
+import pl.morlinski.weather.DateUtils;
 import pl.morlinski.weather.Weather;
 
 /**
@@ -44,7 +44,7 @@ public class ForecastWeatherResponse implements Weather {
         double rainSum = Arrays.stream(list).mapToDouble(item -> {
             LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (DataUtils.timeIsBetween(time, begin, end)) {
+            if (DateUtils.timeIsBetween(time, begin, end)) {
                 count.incrementAndGet();
                 if (item.getRain() == null) {
                     return 0.0;
@@ -56,7 +56,10 @@ public class ForecastWeatherResponse implements Weather {
             }
         }).sum();
 
-        double rainAvg = rainSum / count.get();
+        double rainAvg = -1.0;
+        if(count.get() != 0) {
+            rainAvg = rainSum / count.get();
+        }
 
         log.info("RainAvg: {}/{} = {}", rainSum, count.get(), rainAvg);
         return rainAvg;
@@ -75,7 +78,7 @@ public class ForecastWeatherResponse implements Weather {
         double temperatureSum = Arrays.stream(list).mapToDouble(item -> {
             LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (DataUtils.timeIsBetween(time, begin, end)) {
+            if (DateUtils.timeIsBetween(time, begin, end)) {
                 count.incrementAndGet();
                 if (item.getMain() == null) {
                     return 0.0;
@@ -87,8 +90,11 @@ public class ForecastWeatherResponse implements Weather {
             }
         }).sum();
 
-        double temperatureAvg = temperatureSum / count.get();
-
+        double temperatureAvg = -1.0;
+        if(count.get() != 0) {
+            temperatureAvg = temperatureSum / count.get();
+        }
+        
         log.info("TemperatureAvg: {}/{} = {}", temperatureSum, count.get(), temperatureAvg);
         return temperatureAvg;
     }
@@ -106,7 +112,7 @@ public class ForecastWeatherResponse implements Weather {
         double cloudsSum = Arrays.stream(list).mapToDouble(item -> {
             LocalDateTime time = convertTimestampToLocalDataTime(item.getDt());
 
-            if (DataUtils.timeIsBetween(time, begin, end) && item.getClouds() != null) {
+            if (DateUtils.timeIsBetween(time, begin, end)) {
                 count.incrementAndGet();
                 if (item.getClouds() == null) {
                     return 0.0;
@@ -118,8 +124,11 @@ public class ForecastWeatherResponse implements Weather {
             }
         }).sum();
 
-        double cloudAvg = cloudsSum / count.get();
-
+        double cloudAvg = -1.0;
+        if(count.get() != 0) {
+            cloudAvg = cloudsSum / count.get();
+        }
+        
         log.info("CloudAvg: {}/{} = {}%", cloudsSum, count.get(), cloudAvg);
         return cloudAvg;
     }
