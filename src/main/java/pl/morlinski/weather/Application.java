@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import pl.morlinski.weather.email.EmailSender;
 import pl.morlinski.weather.openweathermap.RequestBuilder;
 import pl.morlinski.weather.openweathermap.RequestBuilder.Operation;
 import pl.morlinski.weather.openweathermap.RequestBuilder.Param;
@@ -50,6 +51,12 @@ public class Application {
      */
     @Autowired
     private SmsApi smsApi;
+    
+    /**
+     * Narzędzie wysyłania email-ów.
+     */
+    @Autowired
+    private EmailSender emailSender;
 
     /**
      * Komponent umożliwia wykonywanie zapytań REST.
@@ -89,7 +96,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner run(RestTemplate restTemplate, @Value("${smsapi.msisdn}") String phoneNumber) {
+    public CommandLineRunner run(RestTemplate restTemplate, @Value("${smsapi.msisdn}") String phoneNumber, @Value("${email}") String email) {
         return args -> {
             String location = "Warsaw,pl";
 
@@ -107,7 +114,9 @@ public class Application {
                     + nextDayEnd.toString();
             log.info("message: {}", message);
 
-            smsApi.sendSMS(message, phoneNumber);
+            //smsApi.sendSMS(message, phoneNumber);
+            emailSender.sendEmail(email, message, message);
+            
         };
     }
 
